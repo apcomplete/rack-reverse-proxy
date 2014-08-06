@@ -13,7 +13,7 @@ module Rack
     def call(env)
       rackreq = Rack::Request.new(env)
       matcher = get_matcher rackreq.fullpath
-      return @app.call(env) if matcher.nil?
+      return @app.call(env) if matcher.nil? || (matcher.options[:if].respond_to?(:call) && !matcher.options[:if].call(env))
 
       uri = matcher.get_uri(rackreq.fullpath,env)
       all_opts = @global_options.dup.merge(matcher.options)
